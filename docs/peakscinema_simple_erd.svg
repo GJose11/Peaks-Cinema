@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1700" viewBox="0 0 3200 1700">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .entity { fill: #f7f9fc; stroke: #3e5f8a; stroke-width: 3; rx: 14; }
+      .title { font: 700 42px "Times New Roman", serif; fill: #000; }
+      .name { font: 700 28px "Times New Roman", serif; fill: #000; text-anchor: middle; dominant-baseline: middle; }
+      .line { stroke: #000; stroke-width: 3.2; fill: none; }
+      .card { font: 700 22px "Times New Roman", serif; fill: #000; }
+      .note { font: 20px "Times New Roman", serif; fill: #000; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="3200" height="1700"/>
+  <text x="1600" y="70" text-anchor="middle" class="title">PeaksCinema Online Movie Ticketing System Simple ERD</text>
+  <text x="1600" y="105" text-anchor="middle" class="note">Major entities and relationships only</text>
+
+  <rect class="entity" x="120" y="180" width="260" height="90"/>
+  <text x="250" y="225" class="name">Mall</text>
+
+  <rect class="entity" x="520" y="180" width="260" height="90"/>
+  <text x="650" y="225" class="name">Movie</text>
+
+  <rect class="entity" x="920" y="180" width="260" height="90"/>
+  <text x="1050" y="225" class="name">Theater</text>
+
+  <rect class="entity" x="1320" y="180" width="260" height="90"/>
+  <text x="1450" y="225" class="name">TimeSlot</text>
+
+  <rect class="entity" x="1720" y="180" width="260" height="90"/>
+  <text x="1850" y="225" class="name">Seats</text>
+
+  <rect class="entity" x="2120" y="180" width="260" height="90"/>
+  <text x="2250" y="225" class="name">Customer</text>
+
+  <rect class="entity" x="2520" y="180" width="260" height="90"/>
+  <text x="2650" y="225" class="name">Ticket</text>
+
+  <rect class="entity" x="2120" y="460" width="260" height="90"/>
+  <text x="2250" y="505" class="name">Payment</text>
+
+  <rect class="entity" x="2520" y="460" width="260" height="90"/>
+  <text x="2650" y="505" class="name">E-Receipt</text>
+
+  <rect class="entity" x="120" y="460" width="260" height="90"/>
+  <text x="250" y="505" class="name">Notifications</text>
+
+  <rect class="entity" x="520" y="460" width="260" height="90"/>
+  <text x="650" y="505" class="name">Food Orders</text>
+
+  <rect class="entity" x="920" y="460" width="260" height="90"/>
+  <text x="1050" y="505" class="name">Food Items</text>
+
+  <path class="line" d="M380 225 H520"/>
+  <text x="440" y="210" class="card">1:N</text>
+
+  <path class="line" d="M780 225 H920"/>
+  <text x="840" y="210" class="card">1:N</text>
+
+  <path class="line" d="M1180 225 H1320"/>
+  <text x="1240" y="210" class="card">1:N</text>
+
+  <path class="line" d="M1580 225 H1720"/>
+  <text x="1640" y="210" class="card">1:N</text>
+
+  <path class="line" d="M2380 225 H2520"/>
+  <text x="2440" y="210" class="card">1:N</text>
+
+  <path class="line" d="M1450 270 V360 H2650 V460"/>
+  <text x="2050" y="345" class="card">1:N</text>
+
+  <path class="line" d="M2250 270 V460"/>
+  <text x="2270" y="365" class="card">1:N</text>
+
+  <path class="line" d="M2650 270 V460"/>
+  <text x="2670" y="365" class="card">1:N</text>
+
+  <path class="line" d="M2250 270 V320 H250 V460"/>
+  <text x="1160" y="305" class="card">1:N</text>
+
+  <path class="line" d="M2250 270 V360 H650 V460"/>
+  <text x="1400" y="345" class="card">1:N</text>
+
+  <path class="line" d="M1180 505 H520"/>
+  <text x="840" y="490" class="card">1:N</text>
+
+  <text x="1600" y="1550" text-anchor="middle" class="note">Simple ERD presents only the major entities involved in reservation, scheduling, payment, and support services.</text>
+</svg>

@@ -23,9 +23,11 @@
         `Customer_ID` int(11) NOT NULL,
         `Name` varchar(100) NOT NULL,
         `Email` varchar(100) NOT NULL,
-        `PhoneNumber` varchar(10) NOT NULL,
-        `CountryCode` varchar(4) NOT NULL,
-        `PaymentMethod` tinytext NOT NULL
+        `Password` varchar(255) NOT NULL,
+        `ProfilePhoto` text DEFAULT NULL,
+        `CountryCode` varchar(10) DEFAULT NULL,
+        `PhoneNumber` varchar(15) DEFAULT NULL,
+        `PaymentMethod` tinytext DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
         CREATE TABLE `e-receipt` (
@@ -33,8 +35,7 @@
         `PaymentID` int(11) NOT NULL,
         `DateIssued` date NOT NULL,
         `SentToEmail` varchar(100) NOT NULL,
-        `ReceiptStatus` int(11) NOT NULL,
-        `Status` int(11) NOT NULL
+        `ReceiptStatus` varchar(20) NOT NULL DEFAULT 'Issued'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
         CREATE TABLE `mall` (
@@ -66,7 +67,7 @@
         `PaymentMethod` varchar(50) NOT NULL,
         `AmountPaid` decimal(10,2) NOT NULL,
         `PaymentDate` date NOT NULL,
-        `PaymentStatus` int(11) NOT NULL
+        `PaymentStatus` varchar(20) NOT NULL DEFAULT 'Paid'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
         CREATE TABLE `seats` (
@@ -74,8 +75,8 @@
         `SeatRow` varchar(10) NOT NULL,
         `SeatColumn` varchar(10) NOT NULL,
         `SeatType` varchar(50) NOT NULL,
-        `SeatAvailability` int(1) DEFAULT NULL,
-        `SeatPrice` tinytext DEFAULT NULL,
+        `SeatAvailability` tinyint(1) NOT NULL DEFAULT 1,
+        `SeatPrice` decimal(10,2) NOT NULL DEFAULT 0.00,
         `Theater_ID` int(11) NOT NULL,
         `TimeSlot_ID` int(11) DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

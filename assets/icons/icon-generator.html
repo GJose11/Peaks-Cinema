@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PeaksCinema Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #000; color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .upload-section { 
+            background: #111; 
+            border: 2px dashed #333; 
+            border-radius: 10px; 
+            padding: 30px; 
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+        .upload-section:hover { border-color: #ff4d4d; }
+        .file-input { display: none; }
+        .upload-btn { 
+            background: linear-gradient(135deg, #ff4d4d, #c0392b); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,77,77,0.3); }
+        .icon-preview { 
+            width: 192px; height: 192px; 
+            background: #000; 
+            border: 2px solid #333; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-preview.large { 
+            width: 512px; height: 512px; 
+            font-size: 64px;
+        }
+        canvas { border: 1px solid #333; margin: 10px 0; }
+        .generated-icons { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        .icon-section { 
+            background: #111; 
+            border-radius: 10px; 
+            padding: 20px; 
+            text-align: center;
+        }
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        .download-btn:hover { background: #218838; transform: scale(1.05); }
+        .instructions {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .instructions h3 { color: #ff4d4d; margin-bottom: 15px; }
+        .instructions ol { text-align: left; line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 PeaksCinema PWA Icon Generator</h1>
+        <p>Upload your icon image to generate properly sized PWA icons</p>
+        
+        <div class="upload-section">
+            <input type="file" id="imageUpload" class="file-input" accept="image/*">
+            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
+                📤 Upload Icon Image
+            </button>
+            <p style="margin-top: 15px; color: #888;">Supports: PNG, JPG, GIF (recommended: square image)</p>
+        </div>
+
+        <div class="generated-icons" id="generatedIcons" style="display: none;">
+            <div class="icon-section">
+                <h3>192x192 Icon</h3>
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <button class="download-btn" onclick="downloadIcon(192)">💾 Download 192x192</button>
+            </div>
+            
+            <div class="icon-section">
+                <h3>512x512 Icon</h3>
+                <canvas id="icon512" width="512" height="512"></canvas>
+                <button class="download-btn" onclick="downloadIcon(512)">💾 Download 512x512</button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click "Upload Icon Image" and select your icon file</li>
+                <li>The generator will create both 192x192 and 512x512 versions</li>
+                <li>Click each download button to save the icons</li>
+                <li>Save the files as <code>icon-192x192.png</code> and <code>icon-512x512.png</code></li>
+                <li>Place both files in the <code>assets/icons/</code> directory</li>
+                <li>Refresh your PeaksCinema app to see the new icons</li>
+            </ol>
+            <p style="margin-top: 15px; color: #ff4d4d;">
+                <strong>Note:</strong> Your PWA will work immediately after placing the icons!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let uploadedImage = null;
+
+        // Handle image upload
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    uploadedImage = new Image();
+                    uploadedImage.onload = function() {
+                        generateIcons();
+                        document.getElementById('generatedIcons').style.display = 'grid';
+                    };
+                    uploadedImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function generateIcons() {
+            generateIcon('icon192', 192);
+            generateIcon('icon512', 512);
+        }
+
+        function generateIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#000000');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw uploaded image
+            if (uploadedImage) {
+                const imgSize = size * 0.7; // Use 70% of canvas size
+                const x = (size - imgSize) / 2;
+                const y = (size - imgSize) / 2;
+                
+                // Add white border around image
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = size * 0.02;
+                ctx.strokeRect(x - size * 0.02, y - size * 0.02, imgSize + size * 0.04, imgSize + size * 0.04);
+                
+                // Draw image
+                ctx.drawImage(uploadedImage, x, y, imgSize, imgSize);
+            } else {
+                // Fallback text if no image
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${size * 0.3}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('PC', size / 2, size / 2);
+                
+                // Small "PeaksCinema" text
+                ctx.font = `${size * 0.08}px Arial`;
+                ctx.fillText('PeaksCinema', size / 2, size * 0.75);
+            }
+        }
+
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`icon${size}`);
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Generate default icons on page load
+        window.addEventListener('load', function() {
+            generateIcons();
+            document.getElementById('generatedIcons').style.display = 'grid';
+        });
+    </script>
+</body>
+</html>

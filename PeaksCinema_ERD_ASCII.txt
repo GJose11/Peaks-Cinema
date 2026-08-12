@@ -1,0 +1,153 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                         🎬 PEAKSCINEMA DATABASE ERD                              ║
+║                    Entity Relationship Diagram - ASCII Version                      ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│     🏢 MALL     │    │   🎭 THEATER    │    │    💺 SEATS     │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ Mall_ID (PK)    │───▶│ Theater_ID (PK) │───▶│ Seat_ID (PK)    │
+│ MallName        │    │ Mall_ID (FK)    │    │ Theater_ID (FK) │
+│ Location        │    │ TheaterName     │    │ TimeSlot_ID (FK)│
+└─────────────────┘    │ TotalSeats      │    │ SeatRow         │
+                       │ TheaterType     │    │ SeatColumn      │
+                       └─────────────────┘    │ SeatType        │
+                                              │ SeatAvailability│
+                                              │ SeatPrice       │
+                                              └─────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│    🎬 MOVIE     │    │  📅 TIMESLOT    │    │   🎟️ TICKET    │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ Movie_ID (PK)   │───▶│ TimeSlot_ID (PK)│───▶│ Ticket_ID (PK)  │
+│ MovieName       │    │ Movie_ID (FK)   │    │ Seat_ID (FK)    │
+│ MovieDesc       │    │ Theater_ID (FK) │    │ Customer_ID (FK)│
+│ Genre           │    │ StartTime       │    │ Movie_ID (FK)   │
+│ Rating          │    │ EndTime         │    │ TimeSlot_ID (FK)│
+│ Runtime         │    │ Date            │    │ Price           │
+│ MoviePoster     │    │ ScreeningType   │    │ Status          │
+│ Availability    │    └─────────────────┘    │ DateTime        │
+└─────────────────┘                            └─────────────────┘
+                                               │
+                                               ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   👤 CUSTOMER   │    │    💳 PAYMENT   │    │  🧾 E-RECEIPT  │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ Customer_ID (PK)│◀───│ Payment_ID (PK) │◀───│ Receipt_ID (PK) │
+│ Name            │    │ Ticket_ID (FK)  │    │ PaymentID (FK)  │
+│ Email           │    │ PaymentMethod   │    │ DateIssued      │
+│ PhoneNumber     │    │ AmountPaid      │    │ SentToEmail     │
+│ CountryCode     │    │ PaymentDate     │    │ ReceiptStatus   │
+│ PaymentMethod   │    │ PaymentStatus   │    │ Status          │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+        │                                           
+        ├───┐                                        
+        │   ▼                                        
+        │   ┌─────────────────┐                      
+        │   │  🔔 NOTIFICATIONS│                      
+        │   ├─────────────────┤                      
+        │   │ Notif_ID (PK)   │                      
+        │   │ Customer_ID (FK)│                      
+        │   │ Title           │                      
+        │   │ Message         │                      
+        │   │ Type            │                      
+        │   │ IsRead          │                      
+        │   │ Created_At      │                      
+        │   └─────────────────┘                      
+        │                                           
+        ├───┐                                        
+        │   ▼                                        
+        │   ┌─────────────────┐                      
+        │   │ 🍿 FOOD_ORDERS  │                      
+        │   ├─────────────────┤                      
+        │   │ Order_ID (PK)   │                      
+        │   │ Customer_ID (FK)│                      
+        │   │ TimeSlot_ID (FK)│                      
+        │   │ Item_ID         │                      
+        │   │ Quantity        │                      
+        │   │ UnitPrice       │                      
+        │   │ BookingRef      │                      
+        │   │ OrderTime       │                      
+        │   └─────────────────┘                      
+        │                                           
+        └───┐                                        
+            ▼                                        
+        ┌─────────────────┐                          
+        │⏱️ CINEMA_QUEUE  │                          
+        ├─────────────────┤                          
+        │ Queue_ID (PK)   │                          
+        │ mall_id (FK)    │                          
+        │ area            │                          
+        │ status          │                          
+        │ queue_length    │                          
+        │ current_wait    │                          
+        │ updated_at      │                          
+        └─────────────────┘                          
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                               RELATIONSHIP SUMMARY                                ║
+╠════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                   ║
+║  🏢 mall (1) ──────────────── (∞) 🎭 theater (1) ──────────────── (∞) 💺 seats   ║
+║         │                                                           │              ║
+│         └───┐                                                       └───┐          ║
+║             ▼                                                           ▼          ║
+║         (∞) 📅 timeslot (1) ──────────────── (∞) 🎟️ ticket ────────── (1) 💳 payment ║
+║         │                                                           │              ║
+│         ▼                                                           ▼              ║
+║     (1) 🎬 movie                                                (∞) 🧾 e-receipt    ║
+║                                                                                   ║
+║                                                                                   ║
+║  👤 customer (1) ──────────────── (∞) 🎟️ ticket                                  ║
+║         │                                                                          ║
+│         ├───┐                                                                      ║
+║         │   ▼                                                                      ║
+║         │ (∞) 🔔 notifications                                                      ║
+║         │                                                                          ║
+│         ├───┐                                                                      ║
+║         │   ▼                                                                      ║
+║         │ (∞) 🍿 food_orders                                                       ║
+║         │                                                                          ║
+│         └───┐                                                                      ║
+║             ▼                                                                      ║
+║         (∞) 📬 reminders_sent                                                      ║
+║                                                                                   ║
+║                                                                                   ║
+║  🏢 mall (1) ──────────────── (∞) ⏱️ cinema_queue                               ║
+║                                                                                   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                            BOOKING PROCESS FLOW                                   ║
+╠════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                   ║
+║  1️⃣  Select Movie      →    🎬 movie table                                     ║
+║  2️⃣  Choose Timeslot    →    📅 timeslot table                                  ║
+║  3️⃣  Pick Seats        →    💺 seats table                                      ║
+║  4️⃣  Create Ticket     →    🎟️ ticket table                                     ║
+║  5️⃣  Process Payment   →    💳 payment table                                    ║
+║  6️⃣  Send Receipt      →    🧾 e-receipt table                                  ║
+║  7️⃣  Send Notification →    🔔 notifications table                              ║
+║                                                                                   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                               TABLE LEGEND                                        ║
+╠════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                   ║
+║  🏢  Location & Infrastructure    │  🎬  Content & Scheduling                     ║
+║  🎭  Theater Management          │  📅  Time Management                          ║
+║  💺  Seating Management          │  👤  Users & Customers                        ║
+║  🎟️  Transactions                │  💳  Payment Processing                       ║
+║  🧾  Receipts & Documentation   │  🔔  Communications                          ║
+║  🍿  Food & Beverages            │  ⏱️  Queue Management                         ║
+║  📬  Reminder System             │  📊  Analytics & Reporting                    ║
+║                                                                                   ║
+║  (PK) = Primary Key             │  (FK) = Foreign Key                           ║
+║  (∞) = Many Records             │  (1) = One Record                            ║
+║                                                                                   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+Generated for PeaksCinema Database System
+Total Tables: 13 | Total Relationships: 20+
+Database: peakscinemadb

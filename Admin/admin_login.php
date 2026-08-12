@@ -18,8 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!$email || !$password) {
         $errorMsg = "Please fill in both fields.";
     } else {
-        // Check against admin table — adjust table/column names to match yours
-        // We try 'admin' table first, fallback to checking a role column on customer
+        // Check against the dedicated admin table
         $admin = null;
 
         // Try dedicated admin table if it exists
@@ -35,22 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $passMatch = password_verify($password, $row['Password'] ?? '')
                           || ($password === ($row['Password'] ?? ''));
                 if ($passMatch) $admin = $row;
-            }
-        }
-
-        // Fallback: check customer table with IsAdmin flag or Role column
-        if (!$admin) {
-            $stmt = $conn->prepare("SELECT * FROM customer WHERE Email = ? LIMIT 1");
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $isAdmin = ($row['IsAdmin'] ?? 0) == 1
-                        || strtolower($row['Role'] ?? '') === 'admin';
-                $passMatch = password_verify($password, $row['Password'] ?? '')
-                          || ($password === ($row['Password'] ?? ''));
-                if ($isAdmin && $passMatch) $admin = $row;
             }
         }
 
@@ -125,8 +108,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .brand-logo {
-            font-size: 2rem;
-            margin-bottom: 6px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .brand-logo img {
+            height: 48px;
+            width: auto;
+            filter: invert(1);
+            display: block;
         }
 
         .brand-name {
@@ -138,8 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .brand-sub {
-            font-size: 0.72rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: #ff4d4d;
@@ -304,8 +294,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="login-wrapper">
 
     <div class="brand">
-        <div class="brand-logo">🎬</div>
-        <div class="brand-name">Peak's Cinema</div>
+        <div class="brand-logo"><img src="../peakscinematransparent.png" alt="Peak's Cinema Logo"></div>
         <div class="brand-sub">Admin Portal</div>
     </div>
 

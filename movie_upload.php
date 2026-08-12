@@ -49,7 +49,7 @@
 
         // Move the temporary file to the actual folder
         if (move_uploaded_file($temp, $endPath)) {
-            $MoviePoster = 'PeaksCinema/MoviePosters/' . $fileName;
+            $MoviePoster = 'MoviePosters/' . $fileName;
         } else {
             echo "There was an error with uploading the poster. Please try again. ";
         }

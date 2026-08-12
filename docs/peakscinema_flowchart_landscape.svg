@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 2200 1200">
+  <defs>
+    <style>
+      .title { font: 700 48px Arial, sans-serif; fill: #222; }
+      .label { font: 700 28px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+      .small { font: 600 22px Arial, sans-serif; fill: #444; text-anchor: middle; dominant-baseline: middle; }
+      .shape { fill: #fff; stroke: #222; stroke-width: 3; }
+      .arrow { stroke: #222; stroke-width: 3.5; fill: none; marker-end: url(#arrowhead); }
+      .yesno { font: 700 22px Arial, sans-serif; fill: #333; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#222" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="2200" height="1200" fill="#fafafa"/>
+  <text x="1100" y="60" class="title">PeaksCinema Online Movie Ticketing System Flowchart</text>
+
+  <ellipse class="shape" cx="140" cy="180" rx="90" ry="38"/>
+  <text x="140" y="180" class="label">Start</text>
+
+  <rect class="shape" x="260" y="142" width="220" height="76" rx="12"/>
+  <text x="370" y="180" class="label">Open System</text>
+
+  <polygon class="shape" points="580,138 720,138 770,222 530,222"/>
+  <text x="650" y="180" class="label">Login / Register</text>
+
+  <polygon class="shape" points="920,100 1050,180 920,260 790,180"/>
+  <text x="920" y="165" class="label">Authenticated?</text>
+  <text x="920" y="198" class="small">Valid account</text>
+
+  <rect class="shape" x="1080" y="142" width="230" height="76" rx="12"/>
+  <text x="1195" y="180" class="label">Browse Movies</text>
+
+  <polygon class="shape" points="1410,138 1540,138 1590,222 1360,222"/>
+  <text x="1475" y="180" class="label">Select Movie</text>
+
+  <polygon class="shape" points="1690,138 1860,138 1910,222 1640,222"/>
+  <text x="1775" y="180" class="label">Select Date and Time</text>
+
+  <rect class="shape" x="1960" y="142" width="210" height="76" rx="12"/>
+  <text x="2065" y="180" class="label">Display Available Seats</text>
+
+  <polygon class="shape" points="1965,330 2165,330 2115,414 1915,414"/>
+  <text x="2040" y="372" class="label">Select Seats</text>
+
+  <rect class="shape" x="1720" y="500" width="260" height="76" rx="12"/>
+  <text x="1850" y="538" class="label">Review Booking Details</text>
+
+  <rect class="shape" x="1420" y="500" width="240" height="76" rx="12"/>
+  <text x="1540" y="538" class="label">Proceed to Payment</text>
+
+  <polygon class="shape" points="1090,496 1270,496 1320,580 1040,580"/>
+  <text x="1180" y="538" class="label">Enter Payment Details</text>
+
+  <polygon class="shape" points="810,458 950,538 810,618 670,538"/>
+  <text x="810" y="523" class="label">Payment</text>
+  <text x="810" y="556" class="small">Successful?</text>
+
+  <rect class="shape" x="660" y="760" width="240" height="76" rx="12"/>
+  <text x="780" y="798" class="label">Confirm Booking</text>
+
+  <rect class="shape" x="980" y="760" width="260" height="76" rx="12"/>
+  <text x="1110" y="798" class="label">Save Booking Record</text>
+
+  <rect class="shape" x="1320" y="760" width="240" height="76" rx="12"/>
+  <text x="1440" y="798" class="label">Update Seat Status</text>
+
+  <rect class="shape" x="1640" y="760" width="220" height="76" rx="12"/>
+  <text x="1750" y="798" class="label">Generate Receipt</text>
+
+  <ellipse class="shape" cx="1990" cy="798" rx="90" ry="38"/>
+  <text x="1990" y="798" class="label">End</text>
+
+  <path class="arrow" d="M230 180 L260 180"/>
+  <path class="arrow" d="M480 180 L530 180"/>
+  <path class="arrow" d="M770 180 L790 180"/>
+  <path class="arrow" d="M1050 180 L1080 180"/>
+  <path class="arrow" d="M1310 180 L1360 180"/>
+  <path class="arrow" d="M1590 180 L1640 180"/>
+  <path class="arrow" d="M1910 180 L2065 180 L2065 330"/>
+  <path class="arrow" d="M1965 372 L1850 372 L1850 500"/>
+  <path class="arrow" d="M1720 538 L1660 538"/>
+  <path class="arrow" d="M1420 538 L1320 538"/>
+  <path class="arrow" d="M1040 538 L950 538"/>
+  <path class="arrow" d="M810 618 L810 760 L660 798"/>
+  <text x="845" y="650" class="yesno">Yes</text>
+  <path class="arrow" d="M900 798 L980 798"/>
+  <path class="arrow" d="M1240 798 L1320 798"/>
+  <path class="arrow" d="M1560 798 L1640 798"/>
+  <path class="arrow" d="M1860 798 L1900 798"/>
+
+  <path class="arrow" d="M670 538 L500 538 L500 660 L1180 660 L1180 580"/>
+  <text x="585" y="522" class="yesno">No</text>
+  <text x="840" y="690" class="small">Re-enter payment details</text>
+
+  <path class="arrow" d="M920 100 L920 70 L650 70 L650 138"/>
+  <text x="785" y="58" class="yesno">No</text>
+  <text x="1040" y="120" class="yesno">Yes</text>
+</svg>

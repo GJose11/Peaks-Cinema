@@ -1,6 +1,8 @@
 <?php
 session_start();
 include("peakscinemas_database.php");
+require_once(__DIR__ . "/auth_otp_helpers.php");
+ensureOtpTableSchema($conn);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -53,14 +55,8 @@ if ($result->num_rows > 0) {
     $stmt2->execute();
 
     // Generate OTP
-    $otp        = rand(100000, 999999);
-    $otp_expiry = gmdate('Y-m-d H:i:s', time() + 300);
-    $otp_resend = gmdate('Y-m-d H:i:s', time() + 60);
-
-    $conn->query("DELETE FROM otp WHERE customer_id = " . $user['Customer_ID']);
-    $stmt3 = $conn->prepare("INSERT INTO otp (customer_id, otp_code, otp_expiry, otp_resend_after) VALUES (?, ?, ?, ?)");
-    $stmt3->bind_param("isss", $user['Customer_ID'], $otp, $otp_expiry, $otp_resend);
-    $stmt3->execute();
+    $otp = rand(100000, 999999);
+    createOtpForCustomer($conn, (int)$user['Customer_ID'], $otp, 300, 60);
 
     $_SESSION['pending_user_id']   = $user['Customer_ID'];
     $_SESSION['pending_user_name'] = $user['Name'];
@@ -111,14 +107,8 @@ if ($result->num_rows > 0) {
     $new_id = $conn->insert_id;
 
     // Generate OTP
-    $otp        = rand(100000, 999999);
-    $otp_expiry = gmdate('Y-m-d H:i:s', time() + 300);
-    $otp_resend = gmdate('Y-m-d H:i:s', time() + 60);
-
-    $conn->query("DELETE FROM otp WHERE customer_id = $new_id");
-    $stmt3 = $conn->prepare("INSERT INTO otp (customer_id, otp_code, otp_expiry, otp_resend_after) VALUES (?, ?, ?, ?)");
-    $stmt3->bind_param("isss", $new_id, $otp, $otp_expiry, $otp_resend);
-    $stmt3->execute();
+    $otp = rand(100000, 999999);
+    createOtpForCustomer($conn, (int)$new_id, $otp, 300, 60);
 
     // Store in session for OTP verification
     $_SESSION['pending_user_id']   = $new_id;
@@ -160,7 +150,7 @@ if ($result->num_rows > 0) {
     } catch (Exception $e) {
         // If email fails, clean up and abort
         $conn->query("DELETE FROM customer WHERE Customer_ID = $new_id");
-        $conn->query("DELETE FROM otp WHERE customer_id = $new_id");
+        invalidateOtpForCustomer($conn, (int)$new_id);
         unset($_SESSION['pending_user_id'], $_SESSION['pending_user_name'], $_SESSION['pending_email'], $_SESSION['pending_photo'], $_SESSION['show_form']);
         echo "<script>alert('Could not send OTP email. Please try again.'); window.location.href='index.php';</script>";
         exit;

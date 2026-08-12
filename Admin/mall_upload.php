@@ -60,7 +60,8 @@
 
         /* Header */
         header { background: #1C1C1C; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: #F9F9F9; text-transform: uppercase; }
+        .logo { display:flex; align-items:center; }
+        .logo img { height: 42px; width: auto; filter: invert(1); display: block; }
         nav { display: flex; gap: 4px; }
         nav a { color: rgba(249,249,249,0.5); text-decoration: none; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 6px; transition: all 0.2s; }
         nav a:hover { background: rgba(255,255,255,0.08); color: #F9F9F9; }
@@ -153,14 +154,16 @@
 <body>
 
 <header>
-    <div class="logo">🎬 PeaksCinemas Admin</div>
+    <div class="logo"><img src="../peakscinematransparent.png" alt="Peak's Cinema Logo"></div>
     <nav>
         <a href="dashboard.php">Dashboard</a>
         <a href="malls_selection_admin.php">Malls</a>
         <a href="malls_selection_admin.php">➕ Add Screenings</a>
         <a href="movie_upload.php">Movie Upload</a>
+        <a href="food_admin.php">Food & Drinks</a>
         <a href="theater_upload.php">Theater Upload</a>
         <a href="mall_upload.php" class="active">Mall Upload</a>
+        <a href="queue_admin.php">Queue Manager</a>
     </nav>
     <div style="display:flex;align-items:center;gap:8px;">
         <a href="../home.php"

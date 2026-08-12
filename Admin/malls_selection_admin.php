@@ -68,32 +68,65 @@
         }
 
         .logo {
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #F9F9F9;
-            text-transform: uppercase;
+            display:flex;
+            align-items:center;
         }
+        .logo img { height: 42px; width: auto; filter: invert(1); display: block; }
 
         nav { display: flex; gap: 4px; }
-
-        nav a {
-            color: rgba(249,249,249,0.5);
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 6px 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
+        nav a { color: rgba(249,249,249,0.5); text-decoration: none; font-size: 0.8rem; font-weight: 500; padding: 6px 14px; border-radius: 6px; transition: all 0.2s; }
         nav a:hover { background: rgba(255,255,255,0.08); color: #F9F9F9; }
-        nav a.active { background: rgba(255,77,77,0.1); color: #ff4d4d; }
+        nav a.active { background: rgba(255,77,77,0.12); color: #ff4d4d; }
+
+        @media (max-width: 1024px) {
+            header { padding: 0 15px; }
+            nav { display: none; }
+            .mobile-nav-toggle { display: flex !important; }
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .mobile-nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        #mobileMenu {
+            display: none;
+            position: fixed;
+            top: 60px; left: 0; width: 100%;
+            background: #1C1C1C;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 999;
+            padding: 10px 0;
+        }
+        #mobileMenu a {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(249,249,249,0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        #mobileMenu a.active { color: #ff4d4d; background: rgba(255,77,77,0.05); }
 
         /* ── Page ── */
         .page-wrapper {
             width: 95%;
             max-width: 900px;
             margin: 36px auto;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper { margin: 24px auto; }
+            .theater-grid { grid-template-columns: 1fr !important; }
         }
 
         .page-header {
@@ -113,6 +146,7 @@
             font-size: 1.6rem;
             font-weight: 800;
             color: #F9F9F9;
+            margin-bottom: 4px;
         }
 
         .page-subtitle {
@@ -280,17 +314,22 @@
 <body>
 
 <header>
-    <div class="logo">🎬 PeaksCinemas Admin</div>
+    <div class="logo"><img src="../peakscinematransparent.png" alt="Peak's Cinema Logo"></div>
     <nav>
         <a href="dashboard.php">Dashboard</a>
         <a href="malls_selection_admin.php" class="active">Malls</a>
         <a href="malls_selection_admin.php">➕ Add Screenings</a>
         <a href="movie_upload.php">Movie Upload</a>
+        <a href="food_admin.php">Food & Drinks</a>
         <a href="theater_upload.php">Theater Upload</a>
         <a href="mall_upload.php">Mall Upload</a>
+        <a href="queue_admin.php">Queue Manager</a>
     </nav>
     <div style="display:flex;align-items:center;gap:8px;">
-        <a href="../home.php"
+        <div class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+        <a href="../home.php" class="desktop-only"
            style="color:rgba(249,249,249,0.45);text-decoration:none;font-size:0.78rem;font-weight:500;
                   padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);
                   transition:all 0.2s;display:flex;align-items:center;gap:5px;"
@@ -298,7 +337,7 @@
            onmouseout="this.style.background='';this.style.color='rgba(249,249,249,0.45)'">
             &#8592; Customer Site
         </a>
-        <a href="admin_logout.php"
+        <a href="admin_logout.php" class="desktop-only"
            style="color:#ff4d4d;text-decoration:none;font-size:0.78rem;font-weight:600;
                   padding:6px 14px;border-radius:6px;border:1px solid rgba(255,77,77,0.3);
                   background:rgba(255,77,77,0.08);transition:all 0.2s;display:flex;align-items:center;gap:5px;"
@@ -309,6 +348,25 @@
         </a>
     </div>
 </header>
+
+<div id="mobileMenu">
+    <a href="dashboard.php">Dashboard</a>
+    <a href="malls_selection_admin.php" class="active">Malls</a>
+    <a href="movie_upload.php">Movie Upload</a>
+    <a href="food_admin.php">Food & Drinks</a>
+    <a href="theater_upload.php">Theater Upload</a>
+    <a href="mall_upload.php">Mall Upload</a>
+    <a href="queue_admin.php">Queue Manager</a>
+    <hr style="opacity:0.1; margin:10px 20px;">
+    <a href="../home.php">← Customer Site</a>
+    <a href="admin_logout.php" style="color:#ff4d4d;">→ Log Out</a>
+</div>
+
+<style>
+@media (max-width: 1024px) {
+    .desktop-only { display: none !important; }
+}
+</style>
 
 <div class="page-wrapper">
 
@@ -368,6 +426,13 @@
     function toggleMall(id) {
         const card = document.getElementById('mall-' + id);
         card.classList.toggle('open');
+    }
+</script>
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const isVisible = menu.style.display === 'block';
+        menu.style.display = isVisible ? 'none' : 'block';
     }
 </script>
 </body>

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeaksCinema Database ERD</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .diagram-container {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .erd-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .table-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .table-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .table-header {
+            padding: 15px;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .location { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .content { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .seating { background: linear-gradient(135deg, #f39c12, #d68910); }
+        .users { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .transactions { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .services { background: linear-gradient(135deg, #1abc9c, #16a085); }
+        
+        .table-body {
+            padding: 15px;
+        }
+        
+        .field {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .field:last-child {
+            border-bottom: none;
+        }
+        
+        .field-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .field-type {
+            color: #7f8c8d;
+            font-size: 0.85em;
+            background: #ecf0f1;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .pk { color: #e74c3c; font-weight: 600; }
+        .fk { color: #3498db; font-weight: 600; }
+        
+        .relationships {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .relationship-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            background: #2c3e50;
+            border-radius: 10px;
+            color: #ecf0f1;
+            overflow-x: auto;
+        }
+        
+        .entity {
+            background: #34495e;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .relationship {
+            color: #3498db;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .flow-diagram {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #3498db;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        .flow-number {
+            background: rgba(255,255,255,0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-step::after {
+                content: '↓';
+                right: 50%;
+                bottom: -25px;
+                top: auto;
+                transform: translateX(50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 PeaksCinema Database ERD</h1>
+            <p>Entity Relationship Diagram for Cinema Booking & Management System</p>
+        </div>
+        
+        <div class="diagram-container">
+            <!-- Location Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">🏢 Location & Infrastructure</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header location">
+                            🏢 mall
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Mall_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">MallName</span>
+                                <span class="field-type">VARCHAR(100)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Location</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header location">
+                            🎭 theater
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Theater_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Mall_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">TheaterName</span>
+                                <span class="field-type">VARCHAR(100)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">TotalSeats</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">TheaterType</span>
+                                <span class="field-type">VARCHAR(50)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">🎬 Content & Scheduling</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header content">
+                            🎬 movie
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Movie_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">MovieName</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Genre</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Rating</span>
+                                <span class="field-type">VARCHAR(10)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Runtime</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header content">
+                            📅 timeslot
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">TimeSlot_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Movie_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Theater_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">StartTime</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Date</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">ScreeningType</span>
+                                <span class="field-type">VARCHAR(5)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seating Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">💺 Seating Management</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header seating">
+                            💺 seats
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Seat_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Theater_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">TimeSlot_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">SeatRow</span>
+                                <span class="field-type">VARCHAR(10)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">SeatColumn</span>
+                                <span class="field-type">VARCHAR(10)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">SeatType</span>
+                                <span class="field-type">VARCHAR(50)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">SeatAvailability</span>
+                                <span class="field-type">INT(1)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">👤 Users & Customers</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header users">
+                            👤 customer
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Customer_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Name</span>
+                                <span class="field-type">VARCHAR(100)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Email</span>
+                                <span class="field-type">VARCHAR(100)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">PhoneNumber</span>
+                                <span class="field-type">VARCHAR(10)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">PaymentMethod</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transaction Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">🎟️ Transactions & Payments</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header transactions">
+                            🎟️ ticket
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Ticket_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Seat_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Customer_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Movie_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">TimeSlot_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Price</span>
+                                <span class="field-type">DECIMAL(10,2)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Status</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header transactions">
+                            💳 payment
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Payment_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Ticket_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">PaymentMethod</span>
+                                <span class="field-type">VARCHAR(50)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">AmountPaid</span>
+                                <span class="field-type">DECIMAL(10,2)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">PaymentDate</span>
+                                <span class="field-type">DATE</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">PaymentStatus</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header transactions">
+                            🧾 e-receipt
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Receipt_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">PaymentID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">DateIssued</span>
+                                <span class="field-type">DATE</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">SentToEmail</span>
+                                <span class="field-type">VARCHAR(100)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">ReceiptStatus</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Service Tables -->
+            <div class="erd-section">
+                <h2 class="section-title">🔔 Services & Communications</h2>
+                <div class="tables-grid">
+                    <div class="table-box">
+                        <div class="table-header services">
+                            🔔 notifications
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Notif_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Customer_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Title</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Message</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Type</span>
+                                <span class="field-type">TEXT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">IsRead</span>
+                                <span class="field-type">BOOLEAN</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Created_At</span>
+                                <span class="field-type">TIMESTAMP</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header services">
+                            🍿 food_orders
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Order_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">Customer_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">TimeSlot_ID</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Item_ID</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">Quantity</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">UnitPrice</span>
+                                <span class="field-type">DECIMAL(10,2)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">BookingRef</span>
+                                <span class="field-type">VARCHAR(50)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-box">
+                        <div class="table-header services">
+                            ⏱️ cinema_queue
+                        </div>
+                        <div class="table-body">
+                            <div class="field">
+                                <span class="field-name pk">Queue_ID</span>
+                                <span class="field-type">INT PK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name fk">mall_id</span>
+                                <span class="field-type">INT FK</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">area</span>
+                                <span class="field-type">VARCHAR(50)</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">status</span>
+                                <span class="field-type">ENUM</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">queue_length</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                            <div class="field">
+                                <span class="field-name">current_wait_mins</span>
+                                <span class="field-type">INT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Relationships Diagram -->
+            <div class="relationships">
+                <h2 class="section-title">🔗 Key Relationships</h2>
+                <div class="relationship-diagram">
+                    <div class="entity">mall</div>
+                    <span class="relationship">1:N</span>
+                    <div class="entity">theater</div>
+                    <span class="relationship">1:N</span>
+                    <div class="entity">seats</div>
+                </div>
+                <div class="relationship-diagram" style="margin-top: 20px;">
+                    <div class="entity">movie</div>
+                    <span class="relationship">1:N</span>
+                    <div class="entity">timeslot</div>
+                    <span class="relationship">1:N</span>
+                    <div class="entity">ticket</div>
+                </div>
+                <div class="relationship-diagram" style="margin-top: 20px;">
+                    <div class="entity">customer</div>
+                    <span class="relationship">1:N</span>
+                    <div class="entity">ticket</div>
+                    <span class="relationship">1:1</span>
+                    <div class="entity">payment</div>
+                </div>
+            </div>
+            
+            <!-- Booking Flow -->
+            <div class="flow-diagram">
+                <h2 class="section-title">📊 Booking Process Flow</h2>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div>Select Movie</div>
+                        <small>movie table</small>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div>Choose Time</div>
+                        <small>timeslot table</small>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div>Pick Seats</div>
+                        <small>seats table</small>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">4</div>
+                        <div>Create Ticket</div>
+                        <small>ticket table</small>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">5</div>
+                        <div>Process Payment</div>
+                        <small>payment table</small>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">6</div>
+                        <div>Send Receipt</div>
+                        <small>e-receipt table</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box pk"></div>
+                    <span>Primary Key (PK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box fk"></div>
+                    <span>Foreign Key (FK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #3498db, #2980b9);"></div>
+                    <span>Location Tables</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #e74c3c, #c0392b);"></div>
+                    <span>Content Tables</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background: linear-gradient(135deg, #2ecc71, #27ae60);"></div>
+                    <span>User Tables</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

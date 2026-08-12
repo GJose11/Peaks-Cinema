@@ -1,0 +1,357 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3600" height="2200" viewBox="0 0 3600 2200">
+  <defs>
+    <style>
+      .bg { fill: #f7f9fc; }
+      .table { fill: #ffffff; stroke: #5b6f95; stroke-width: 2.2; }
+      .head { fill: #dbe8ff; stroke: #5b6f95; stroke-width: 2.2; }
+      .title { font: 700 42px Arial, sans-serif; fill: #1f2d3d; }
+      .tname { font: 700 24px Arial, sans-serif; fill: #1f2d3d; }
+      .row { font: 18px Arial, sans-serif; fill: #223; }
+      .note { font: 18px Arial, sans-serif; fill: #4c5b70; }
+      .line { stroke: #6e7fa6; stroke-width: 3; fill: none; }
+      .crow { font: 22px Arial, sans-serif; fill: #4f628e; }
+      .rel { stroke: #6e7fa6; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="3600" height="2200"/>
+  <text x="1800" y="60" text-anchor="middle" class="title">PeaksCinema Online Movie Ticketing System ERD</text>
+  <text x="1800" y="95" text-anchor="middle" class="note">Lucidchart-style schema view based on the current PeaksCinema database tables and observed PHP module usage</text>
+
+  <!-- CUSTOMER -->
+  <g transform="translate(80,180)">
+    <rect class="table" width="360" height="220" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">customer</text>
+    <text x="18" y="76" class="row">PK  Customer_ID</text>
+    <text x="18" y="106" class="row">Name</text>
+    <text x="18" y="136" class="row">Email</text>
+    <text x="18" y="166" class="row">Password</text>
+    <text x="18" y="196" class="row">ProfilePhoto</text>
+  </g>
+
+  <!-- ADMIN -->
+  <g transform="translate(80,460)">
+    <rect class="table" width="360" height="170" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">admin</text>
+    <text x="18" y="76" class="row">PK  Admin_ID</text>
+    <text x="18" y="106" class="row">Name</text>
+    <text x="18" y="136" class="row">Email</text>
+  </g>
+
+  <!-- STAFF -->
+  <g transform="translate(80,690)">
+    <rect class="table" width="360" height="170" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">staff</text>
+    <text x="18" y="76" class="row">PK  Staff_ID</text>
+    <text x="18" y="106" class="row">Name</text>
+    <text x="18" y="136" class="row">Email</text>
+  </g>
+
+  <!-- OTP -->
+  <g transform="translate(80,920)">
+    <rect class="table" width="360" height="170" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">otp</text>
+    <text x="18" y="76" class="row">PK  OTP_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">Code / Expiry</text>
+  </g>
+
+  <!-- DISCOUNT VERIFICATIONS -->
+  <g transform="translate(80,1150)">
+    <rect class="table" width="360" height="190" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">discount_verifications</text>
+    <text x="18" y="76" class="row">PK  Verification_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">DiscountType</text>
+    <text x="18" y="166" class="row">Status</text>
+  </g>
+
+  <!-- NOTIFICATIONS -->
+  <g transform="translate(80,1400)">
+    <rect class="table" width="360" height="200" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">notifications</text>
+    <text x="18" y="76" class="row">PK  Notif_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">Title</text>
+    <text x="18" y="166" class="row">Message</text>
+    <text x="18" y="196" class="row">IsRead</text>
+  </g>
+
+  <!-- REMINDERS -->
+  <g transform="translate(80,1660)">
+    <rect class="table" width="360" height="170" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">reminders_sent</text>
+    <text x="18" y="76" class="row">PK  Reminder_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">ReminderDate</text>
+  </g>
+
+  <!-- MALL -->
+  <g transform="translate(620,180)">
+    <rect class="table" width="360" height="180" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">mall</text>
+    <text x="18" y="76" class="row">PK  Mall_ID</text>
+    <text x="18" y="106" class="row">MallName</text>
+    <text x="18" y="136" class="row">Location</text>
+  </g>
+
+  <!-- THEATER -->
+  <g transform="translate(620,430)">
+    <rect class="table" width="360" height="210" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">theater</text>
+    <text x="18" y="76" class="row">PK  Theater_ID</text>
+    <text x="18" y="106" class="row">FK  Mall_ID</text>
+    <text x="18" y="136" class="row">TheaterName</text>
+    <text x="18" y="166" class="row">TheaterType</text>
+    <text x="18" y="196" class="row">TotalSeats</text>
+  </g>
+
+  <!-- CINEMA QUEUE -->
+  <g transform="translate(620,720)">
+    <rect class="table" width="360" height="210" rx="8"/>
+    <rect class="head" width="360" height="46" rx="8"/>
+    <text x="180" y="30" text-anchor="middle" class="tname">cinema_queue</text>
+    <text x="18" y="76" class="row">PK  Queue_ID</text>
+    <text x="18" y="106" class="row">FK  Mall_ID</text>
+    <text x="18" y="136" class="row">Area</text>
+    <text x="18" y="166" class="row">QueueLength</text>
+    <text x="18" y="196" class="row">CurrentWaitMins</text>
+  </g>
+
+  <!-- MOVIE -->
+  <g transform="translate(1180,180)">
+    <rect class="table" width="400" height="240" rx="8"/>
+    <rect class="head" width="400" height="46" rx="8"/>
+    <text x="200" y="30" text-anchor="middle" class="tname">movie</text>
+    <text x="18" y="76" class="row">PK  Movie_ID</text>
+    <text x="18" y="106" class="row">MovieName</text>
+    <text x="18" y="136" class="row">Genre</text>
+    <text x="18" y="166" class="row">Rating</text>
+    <text x="18" y="196" class="row">Runtime</text>
+    <text x="18" y="226" class="row">Price / Availability</text>
+  </g>
+
+  <!-- TIMESLOT -->
+  <g transform="translate(1180,500)">
+    <rect class="table" width="400" height="240" rx="8"/>
+    <rect class="head" width="400" height="46" rx="8"/>
+    <text x="200" y="30" text-anchor="middle" class="tname">timeslot</text>
+    <text x="18" y="76" class="row">PK  TimeSlot_ID</text>
+    <text x="18" y="106" class="row">FK  Movie_ID</text>
+    <text x="18" y="136" class="row">FK  Theater_ID</text>
+    <text x="18" y="166" class="row">Date</text>
+    <text x="18" y="196" class="row">StartTime</text>
+    <text x="18" y="226" class="row">ScreeningType</text>
+  </g>
+
+  <!-- SEATS -->
+  <g transform="translate(1180,820)">
+    <rect class="table" width="400" height="260" rx="8"/>
+    <rect class="head" width="400" height="46" rx="8"/>
+    <text x="200" y="30" text-anchor="middle" class="tname">seats</text>
+    <text x="18" y="76" class="row">PK  Seat_ID</text>
+    <text x="18" y="106" class="row">FK  Theater_ID</text>
+    <text x="18" y="136" class="row">FK  TimeSlot_ID</text>
+    <text x="18" y="166" class="row">SeatRow</text>
+    <text x="18" y="196" class="row">SeatColumn</text>
+    <text x="18" y="226" class="row">SeatType / SeatPrice</text>
+    <text x="18" y="256" class="row">SeatAvailability</text>
+  </g>
+
+  <!-- TICKET -->
+  <g transform="translate(1760,340)">
+    <rect class="table" width="420" height="250" rx="8"/>
+    <rect class="head" width="420" height="46" rx="8"/>
+    <text x="210" y="30" text-anchor="middle" class="tname">ticket</text>
+    <text x="18" y="76" class="row">PK  Ticket_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">FK  Movie_ID</text>
+    <text x="18" y="166" class="row">FK  TimeSlot_ID</text>
+    <text x="18" y="196" class="row">BookingReference</text>
+    <text x="18" y="226" class="row">BookingDate / Status</text>
+  </g>
+
+  <!-- PAYMENT -->
+  <g transform="translate(1760,670)">
+    <rect class="table" width="420" height="220" rx="8"/>
+    <rect class="head" width="420" height="46" rx="8"/>
+    <text x="210" y="30" text-anchor="middle" class="tname">payment</text>
+    <text x="18" y="76" class="row">PK  Payment_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">FK  Ticket_ID</text>
+    <text x="18" y="166" class="row">Amount / Method</text>
+    <text x="18" y="196" class="row">PaymentStatus / Date</text>
+  </g>
+
+  <!-- E-RECEIPT -->
+  <g transform="translate(1760,960)">
+    <rect class="table" width="420" height="190" rx="8"/>
+    <rect class="head" width="420" height="46" rx="8"/>
+    <text x="210" y="30" text-anchor="middle" class="tname">e-receipt</text>
+    <text x="18" y="76" class="row">PK  Receipt_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">FK  Ticket_ID</text>
+    <text x="18" y="166" class="row">ReceiptDetails</text>
+  </g>
+
+  <!-- FOOD ITEMS -->
+  <g transform="translate(2360,380)">
+    <rect class="table" width="420" height="220" rx="8"/>
+    <rect class="head" width="420" height="46" rx="8"/>
+    <text x="210" y="30" text-anchor="middle" class="tname">food_items</text>
+    <text x="18" y="76" class="row">PK  Item_ID</text>
+    <text x="18" y="106" class="row">ItemName</text>
+    <text x="18" y="136" class="row">Description</text>
+    <text x="18" y="166" class="row">Price / Category</text>
+    <text x="18" y="196" class="row">IsAvailable / SortOrder</text>
+  </g>
+
+  <!-- FOOD ORDERS -->
+  <g transform="translate(2360,700)">
+    <rect class="table" width="420" height="220" rx="8"/>
+    <rect class="head" width="420" height="46" rx="8"/>
+    <text x="210" y="30" text-anchor="middle" class="tname">food_orders</text>
+    <text x="18" y="76" class="row">PK  Order_ID</text>
+    <text x="18" y="106" class="row">FK  Customer_ID</text>
+    <text x="18" y="136" class="row">FK  Item_ID</text>
+    <text x="18" y="166" class="row">Quantity</text>
+    <text x="18" y="196" class="row">OrderStatus</text>
+  </g>
+
+  <!-- CONNECTORS -->
+  <!-- mall to theater -->
+  <path class="rel" d="M980 535 H1180"/>
+  <path class="rel" d="M998 523 L980 535 L998 547"/>
+  <path class="rel" d="M1162 523 L1180 535 L1162 547"/>
+  <path class="rel" d="M1148 523 L1180 535 L1148 547"/>
+  <text x="1080" y="514" class="crow">1:N</text>
+
+  <!-- mall to movie -->
+  <path class="rel" d="M980 270 H1180"/>
+  <path class="rel" d="M998 258 L980 270 L998 282"/>
+  <path class="rel" d="M1162 258 L1180 270 L1162 282"/>
+  <path class="rel" d="M1148 258 L1180 270 L1148 282"/>
+  <text x="1080" y="252" class="crow">1:N</text>
+
+  <!-- mall to cinema_queue -->
+  <path class="rel" d="M800 360 V720"/>
+  <path class="rel" d="M788 378 L800 360 L812 378"/>
+  <path class="rel" d="M788 702 L800 720 L812 702"/>
+  <path class="rel" d="M776 702 L800 720 L824 702"/>
+  <text x="820" y="548" class="crow">1:N</text>
+
+  <!-- movie to timeslot -->
+  <path class="rel" d="M1380 420 V500"/>
+  <path class="rel" d="M1368 438 L1380 420 L1392 438"/>
+  <path class="rel" d="M1368 482 L1380 500 L1392 482"/>
+  <path class="rel" d="M1356 482 L1380 500 L1404 482"/>
+  <text x="1398" y="468" class="crow">1:N</text>
+
+  <!-- theater to timeslot -->
+  <path class="rel" d="M980 535 H1180"/>
+  <text x="1080" y="514" class="crow">1:N</text>
+
+  <!-- theater to seats -->
+  <path class="rel" d="M980 535 C1080 535, 1080 950, 1180 950"/>
+  <path class="rel" d="M998 523 L980 535 L998 547"/>
+  <path class="rel" d="M1162 938 L1180 950 L1162 962"/>
+  <path class="rel" d="M1148 938 L1180 950 L1148 962"/>
+  <text x="1090" y="930" class="crow">1:N</text>
+
+  <!-- timeslot to ticket -->
+  <path class="rel" d="M1580 620 H1760"/>
+  <path class="rel" d="M1598 608 L1580 620 L1598 632"/>
+  <path class="rel" d="M1742 608 L1760 620 L1742 632"/>
+  <path class="rel" d="M1728 608 L1760 620 L1728 632"/>
+  <text x="1670" y="604" class="crow">1:N</text>
+
+  <!-- customer to ticket -->
+  <path class="rel" d="M440 290 C560 290, 560 465, 1760 465"/>
+  <path class="rel" d="M458 278 L440 290 L458 302"/>
+  <path class="rel" d="M1742 453 L1760 465 L1742 477"/>
+  <path class="rel" d="M1728 453 L1760 465 L1728 477"/>
+  <text x="1030" y="448" class="crow">1:N</text>
+
+  <!-- customer to payment -->
+  <path class="rel" d="M440 290 C600 290, 600 780, 1760 780"/>
+  <path class="rel" d="M458 278 L440 290 L458 302"/>
+  <path class="rel" d="M1742 768 L1760 780 L1742 792"/>
+  <path class="rel" d="M1728 768 L1760 780 L1728 792"/>
+  <text x="1080" y="763" class="crow">1:N</text>
+
+  <!-- customer to e-receipt -->
+  <path class="rel" d="M440 290 C820 290, 820 1055, 1760 1055"/>
+  <path class="rel" d="M458 278 L440 290 L458 302"/>
+  <path class="rel" d="M1742 1043 L1760 1055 L1742 1067"/>
+  <path class="rel" d="M1728 1043 L1760 1055 L1728 1067"/>
+  <text x="1110" y="1038" class="crow">1:N</text>
+
+  <!-- ticket to payment -->
+  <path class="rel" d="M1970 590 V670"/>
+  <path class="rel" d="M1958 608 L1970 590 L1982 608"/>
+  <path class="rel" d="M1958 652 L1970 670 L1982 652"/>
+  <path class="rel" d="M1946 652 L1970 670 L1994 652"/>
+  <text x="1990" y="636" class="crow">1:N</text>
+
+  <!-- ticket to e-receipt -->
+  <path class="rel" d="M1970 890 V960"/>
+  <path class="rel" d="M1958 908 L1970 890 L1982 908"/>
+  <path class="rel" d="M1958 942 L1970 960 L1982 942"/>
+  <path class="rel" d="M1946 942 L1970 960 L1994 942"/>
+  <text x="1990" y="930" class="crow">1:N</text>
+
+  <!-- food_items to food_orders -->
+  <path class="rel" d="M2570 600 V700"/>
+  <path class="rel" d="M2558 618 L2570 600 L2582 618"/>
+  <path class="rel" d="M2558 682 L2570 700 L2582 682"/>
+  <path class="rel" d="M2546 682 L2570 700 L2594 682"/>
+  <text x="2590" y="655" class="crow">1:N</text>
+
+  <!-- customer to food_orders -->
+  <path class="rel" d="M440 290 C700 290, 700 810, 2360 810"/>
+  <path class="rel" d="M458 278 L440 290 L458 302"/>
+  <path class="rel" d="M2342 798 L2360 810 L2342 822"/>
+  <path class="rel" d="M2328 798 L2360 810 L2328 822"/>
+  <text x="1410" y="792" class="crow">1:N</text>
+
+  <!-- customer to otp -->
+  <path class="rel" d="M440 1005 H80"/>
+  <path class="rel" d="M422 993 L440 1005 L422 1017"/>
+  <path class="rel" d="M98 993 L80 1005 L98 1017"/>
+  <path class="rel" d="M112 993 L80 1005 L112 1017"/>
+  <text x="250" y="988" class="crow">1:N</text>
+
+  <!-- customer to discount_verifications -->
+  <path class="rel" d="M440 1245 H80"/>
+  <path class="rel" d="M422 1233 L440 1245 L422 1257"/>
+  <path class="rel" d="M98 1233 L80 1245 L98 1257"/>
+  <path class="rel" d="M112 1233 L80 1245 L112 1257"/>
+  <text x="250" y="1228" class="crow">1:N</text>
+
+  <!-- customer to notifications -->
+  <path class="rel" d="M440 1500 H80"/>
+  <path class="rel" d="M422 1488 L440 1500 L422 1512"/>
+  <path class="rel" d="M98 1488 L80 1500 L98 1512"/>
+  <path class="rel" d="M112 1488 L80 1500 L112 1512"/>
+  <text x="250" y="1483" class="crow">1:N</text>
+
+  <!-- customer to reminders_sent -->
+  <path class="rel" d="M440 1745 H80"/>
+  <path class="rel" d="M422 1733 L440 1745 L422 1757"/>
+  <path class="rel" d="M98 1733 L80 1745 L98 1757"/>
+  <path class="rel" d="M112 1733 L80 1745 L112 1757"/>
+  <text x="250" y="1728" class="crow">1:N</text>
+
+  <text x="2860" y="1450" class="note">Primary operational entities are centered on malls, movies, scheduling, seats, ticketing, and payment.</text>
+  <text x="2860" y="1480" class="note">Support entities include OTP, notifications, food orders, queue monitoring, receipts, and reminders.</text>
+  <text x="2860" y="1510" class="note">This version includes a direct mall-to-movie relationship to match the team’s intended design.</text>
+</svg>

@@ -7,7 +7,7 @@
 
     $user_initials = '';
     if (isset($_SESSION['user_id'])) {
-        $profile_link = "profile_edit.php";
+        $profile_link = "profile_dashboard.php";
         $ps = $conn->prepare("SELECT Name, ProfilePhoto FROM customer WHERE Customer_ID = ?");
         $ps->bind_param("i", $_SESSION['user_id']); $ps->execute();
         $pr = $ps->get_result()->fetch_assoc();
@@ -29,7 +29,7 @@
     $movieDetails = ($stmt->get_result())->fetch_assoc();
     if (!$movieDetails) { header("Location: home.php"); exit; }
 
-    // ── Fetch all upcoming screenings grouped by date → mall → screeningType (SM Cinema style) ──
+    // Fetch all upcoming screenings
     $sched_stmt = $conn->prepare("
         SELECT t.TimeSlot_ID, t.Date, t.StartTime, t.ScreeningType,
                th.TheaterName, th.Theater_ID,
@@ -37,16 +37,20 @@
         FROM timeslot t
         JOIN theater th ON t.Theater_ID = th.Theater_ID
         JOIN mall m ON th.Mall_ID = m.Mall_ID
-        WHERE t.Movie_ID = ? AND t.Date >= CURDATE()
+        WHERE t.Movie_ID = ?
+          AND (
+              t.Date > CURDATE()
+              OR (t.Date = CURDATE() AND t.StartTime > CURTIME())
+          )
         ORDER BY t.Date ASC, m.MallName ASC, t.ScreeningType ASC, t.StartTime ASC
     ");
     $sched_stmt->bind_param("i", $Movie_ID);
     $sched_stmt->execute();
     $schedResult = $sched_stmt->get_result();
 
-    // [date][mall_id] => { mall_name, mall_id, types: { '2D'=>[slots], 'IMAX'=>[slots] } }
     $scheduleData   = [];
     $availableDates = [];
+    $now = time();
     while ($row = $schedResult->fetch_assoc()) {
         $d    = $row['Date'];
         $mi   = $row['Mall_ID'];
@@ -58,11 +62,14 @@
         if (!isset($scheduleData[$d][$mi]['types'][$type])) {
             $scheduleData[$d][$mi]['types'][$type] = [];
         }
+        $slotTime    = strtotime($row['Date'] . ' ' . $row['StartTime']);
+        $isDisabled  = ($slotTime - $now) < 1800;
         $scheduleData[$d][$mi]['types'][$type][] = [
             'id'           => $row['TimeSlot_ID'],
             'time'         => $row['StartTime'],
             'theater_name' => $row['TheaterName'],
             'theater_id'   => $row['Theater_ID'],
+            'disabled'     => $isDisabled,
         ];
     }
 ?>
@@ -85,6 +92,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top: 50px;
         }
         body::before {
             content: '';
@@ -102,56 +110,141 @@
             pointer-events: none;
         }
 
-        /* ── Header ── */
+        /* Standardized Header */
         header {
             background: #1C1C1C;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            height: 60px;
-            z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: 50px; z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            transition: transform 0.3s ease, all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        header.header-hidden { transform: translateY(-100%); }
-        body { padding-top: 70px; }
-
-        .logo img {
-            height: 50px;
+        header.hidden { transform: translateY(-100%); }
+        .brand-logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            transition: transform 0.2s ease;
-            filter: invert(1);
+            flex-shrink: 0;
         }
-        .logo img:hover { transform: scale(1.05); }
+        .brand-logo-wrap:hover { transform: scale(1.05); }
+        .brand-logo { height: 34px; width: auto; filter: invert(1); display: block; }
+
+        /* Right actions */
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+
+        .bookings-btn, .notif-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 7px; padding: 6px 9px;
+            color: rgba(249,249,249,0.65); font-size: 0.92rem;
+            cursor: pointer; transition: all 0.25s;
+            font-family: 'Outfit', sans-serif;
+            display: flex; align-items: center;
+            height: 32px;
+        }
+        .bookings-btn:hover, .notif-btn:hover { 
+            background: rgba(255,255,255,0.12); color: #F9F9F9;
+            transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .bookings-btn { gap: 5px; }
+        .bookings-btn::after { content: 'My Bookings'; font-size: 0.75rem; font-weight: 600; }
+
+        .notif-wrap { position: relative; display: flex; align-items: center; }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            background: #ff4d4d; color: #fff;
+            font-size: 0.55rem; font-weight: 800;
+            min-width: 16px; height: 16px; border-radius: 8px;
+            display: none; align-items: center; justify-content: center;
+            padding: 0 4px;
+        }
 
         .profile-btn {
-            background-color: #F9F9F9;
-            border: none;
-            border-radius: 50%;
-            width: 45px; height: 45px;
+            background: #F9F9F9; border: none; border-radius: 50%;
+            width: 34px; height: 34px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
+            cursor: pointer; overflow: hidden; padding: 0;
+            transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            flex-shrink: 0;
         }
-        .profile-btn:hover { transform: scale(1.1); box-shadow: 0 0 12px rgba(255,255,255,0.3); }
-        .profile-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .profile-btn img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-btn:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(255,255,255,0.2); }
         .profile-initials {
-            width: 100%; height: 100%; border-radius: 50%;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, #ff4d4d, #c0392b);
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.82rem; font-weight: 800; color: #fff;
-            letter-spacing: 0.5px; font-family: 'Outfit', sans-serif;
+            font-size: 0.78rem; font-weight: 800; color: #fff;
         }
 
-        /* ── Hero Banner ── */
-        .hero-banner { position: relative; z-index: 10;
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: nowrap;
+                height: 50px;
+                padding: 0 12px;
+                gap: 8px;
+            }
+            .brand-logo-wrap { flex-shrink: 0; }
+            .brand-logo { height: 32px; }
+            .bookings-btn::after { display: none; }
+            .bookings-btn, .notif-btn { width: 40px; justify-content: center; padding: 0; }
+        }
+
+        @media (max-width: 480px) {
+            header { padding: 0 10px; gap: 8px; }
+            .brand-logo { height: 32px; }
+            .header-actions { gap: 5px; }
+            .bookings-btn { padding: 6px 9px; font-size: 0.95rem; }
+            .notif-btn { padding: 6px 9px; font-size: 0.95rem; }
+            .profile-btn { width: 36px; height: 36px; }
+        }
+
+        /* Notification dropdown styles - using DIV instead of A to avoid purple links */
+        .notif-dropdown {
+            display: none; position: absolute; top: calc(100% + 8px); right: 0;
+            width: 320px; background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.6); z-index: 2000;
+        }
+        @media (max-width: 480px) {
+            .notif-dropdown {
+                position: fixed;
+                top: 60px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+            }
+        }
+        .notif-dropdown.open { display: block; }
+        .notif-header {
+            padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .notif-header span { font-size: 0.78rem; font-weight: 700; color: rgba(249,249,249,0.5); letter-spacing: 1px; text-transform: uppercase; }
+        .notif-mark-all { font-size: 0.7rem; color: #ff6b6b; cursor: pointer; background: none; border: none; font-family: 'Outfit',sans-serif; font-weight: 600; }
+        .notif-list { max-height: 280px; overflow-y: auto; }
+        .notif-item { padding: 12px 16px 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; display: flex; gap: 6px; align-items: flex-start; text-decoration: none; color: inherit; }
+        .notif-item:hover { background: rgba(255,255,255,0.04); }
+        .notif-item.unread { background: rgba(255,77,77,0.05); }
+        .notif-dot { width: 6px; height: 6px; border-radius: 50%; background: #ff4d4d; flex-shrink: 0; margin-top: 6px; }
+        .notif-dot.read { background: transparent; }
+        .notif-item-body { flex: 1; min-width: 0; }
+        .notif-item-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; }
+        .notif-item-msg { font-size: 0.72rem; color: rgba(249,249,249,0.4); line-height: 1.5; }
+        .notif-item-time { font-size: 0.65rem; color: rgba(249,249,249,0.25); margin-top: 4px; }
+        .notif-empty { text-align: center; padding: 30px; font-size: 0.82rem; color: rgba(249,249,249,0.2); }
+        .notif-footer { padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; }
+        .notif-footer a { font-size: 0.75rem; color: #ff6b6b; text-decoration: none; font-weight: 600; }
+
+        /* Hero Banner */
+        .hero-banner {
             position: relative;
+            z-index: 10;
             width: 100%;
-            height: 480px;
+            height: 550px;
             overflow: hidden;
         }
 
@@ -187,46 +280,20 @@
             position: relative;
             z-index: 2;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 20px;
             height: 100%;
-            padding: 0 60px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            gap: 30px;
-        }
-
-        .hero-info {
-            padding-bottom: 5px;
-            max-width: 520px;
-        }
-
-        .hero-poster-right {
-            height: 380px;
-            width: auto;
-            border-radius: 10px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.9);
-            border: 2px solid rgba(255,255,255,0.1);
-            flex-shrink: 0;
-            object-fit: cover;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: flex-end;
-            gap: 30px;
-            height: 100%;
-            padding: 0 60px 40px;
+            padding: 0 60px 60px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
-
+        
         .hero-info {
-            padding-bottom: 5px;
+            margin-top: auto;
+            padding-top: 220px;
+            max-width: 700px;
+            padding-right: 0;
         }
 
         .hero-availability {
@@ -277,7 +344,7 @@
             font-size: 0.85rem;
         }
 
-        /* ── Trailer Button on Hero ── */
+        /* Trailer Button on Hero */
         .hero-trailer-btn {
             display: inline-flex;
             align-items: center;
@@ -293,15 +360,14 @@
             font-weight: 600;
             transition: all 0.2s ease;
             backdrop-filter: blur(4px);
+            margin-top: 40px;
         }
         .hero-trailer-btn:hover {
             background: rgba(255,77,77,0.8);
             border-color: #ff4d4d;
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255,77,77,0.3); 
         }
 
-        /* ── Centered Play Button Overlay ── */
+        /* Centered Play Button Overlay */
         .hero-play-overlay {
             position: absolute;
             inset: 0;
@@ -310,6 +376,7 @@
             align-items: center;
             justify-content: center;
             pointer-events: none;
+            padding-bottom: 120px;
         }
 
         .hero-play-btn {
@@ -347,7 +414,7 @@
             font-weight: 700;
         }
 
-        /* ── Main Content ── */
+        /* Main Content */
         .main-content-wrapper {
             position: relative;
             z-index: 10;
@@ -378,20 +445,58 @@
 
         .left-column { flex: 1; }
 
-        /* ── Schedule Section ── */
+        /* Synopsis */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ff4d4d;
+            margin-bottom: 12px;
+        }
+
+        .synopsis-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 35px;
+        }
+
+        /* Movie Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .detail-item span {
+            font-size: 0.95rem;
+            color: #F9F9F9;
+            font-weight: 500;
+        }
+
+        /* Schedule Section */
         .schedule-wrapper {
             position: relative;
             z-index: 10;
-        }
-        .schedule-wrapper::before {
-            content: none;
         }
         .schedule-inner {
             position: relative;
             z-index: 1;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 60px 60px;
+            padding: 80px 60px 60px;
         }
         .schedule-title {
             font-size: 0.78rem;
@@ -402,7 +507,7 @@
             margin-bottom: 20px;
         }
 
-        /* ── Date tabs ── */
+        /* Date tabs */
         .date-tabs {
             display: flex;
             gap: 8px;
@@ -529,6 +634,22 @@
             text-decoration: none;
             min-width: 115px;
         }
+        .time-btn-disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
+            position: relative;
+            border-color: rgba(255,255,255,0.05);
+        }
+        .t-closed {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff4d4d;
+            margin-top: 2px;
+        }
         .time-btn:hover {
             border-color: #ff4d4d;
             background: rgba(255,77,77,0.12);
@@ -570,136 +691,7 @@
             font-size: 0.9rem;
         }
 
-        /* Synopsis */
-        .section-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #ff4d4d;
-            margin-bottom: 12px;
-        }
-
-        .synopsis-text {
-            font-size: 0.95rem;
-            line-height: 1.8;
-            color: #ccc;
-            margin-bottom: 35px;
-        }
-
-        /* Movie Details Grid */
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 35px;
-        }
-
-        .detail-item label {
-            display: block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 4px;
-        }
-
-        .detail-item span {
-            font-size: 0.95rem;
-            color: #F9F9F9;
-            font-weight: 500;
-        }
-
-        /* ── Booking Box ── */
-        .booking-box {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 24px;
-            position: sticky;
-            top: 90px;
-        }
-
-        .booking-box h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #F9F9F9;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .booking-step {
-            margin-bottom: 16px;
-        }
-
-        .booking-step label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #aaa;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 7px;
-        }
-
-        .booking-step select,
-        .booking-step input[type="date"] {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            background-color: rgba(255,255,255,0.07);
-            color: #F9F9F9;
-            outline: none;
-            font-family: 'Outfit', sans-serif;
-            transition: border-color 0.2s ease;
-            cursor: pointer;
-        }
-
-        .booking-step select:focus,
-        .booking-step input[type="date"]:focus {
-            border-color: #ff4d4d;
-        }
-
-        .booking-step select option {
-            background: #1C1C1C;
-            color: #F9F9F9;
-        }
-
-        #mallAdvice {
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 6px;
-            font-weight: 600;
-            display: block;
-        }
-
-        #nextButton {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            border: none;
-            background-color: #ff4d4d;
-            color: #F9F9F9;
-            cursor: pointer;
-            visibility: hidden;
-            font-family: 'Outfit', sans-serif;
-            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        #nextButton:hover {
-            background-color: #ff3333;
-            transform: translateY(-2px);
-            box-shadow: 0 0 18px rgba(255,75,75,0.5);
-        }
-
-        /* ── Trailer Modal ── */
+        /* Trailer Modal */
         .trailer-modal {
             display: none;
             position: fixed;
@@ -731,36 +723,93 @@
         }
 
         @media (max-width: 900px) {
-            .hero-content { padding: 0 20px 30px; }
-            .hero-title { font-size: 1.8rem; }
-            .main-content { flex-direction: column; padding: 25px 20px; gap: 25px; }
-            .poster-column { width: 140px; min-width: unset; margin: 0 auto; }
-            .right-column { width: 100%; min-width: unset; }
-            .booking-box { position: static; }
-            .details-grid { grid-template-columns: 1fr; }
+            .hero-banner { height: auto; min-height: 400px; padding-top: 40px; }
+            .hero-content { 
+                flex-direction: column; 
+                align-items: center; 
+                text-align: center; 
+                padding: 30px 20px; 
+                gap: 15px;
+            }
+            .hero-info { max-width: 100%; padding-bottom: 10px; }
+            .hero-title { font-size: 2.2rem; margin-bottom: 15px; }
+            .hero-badges { justify-content: center; margin-bottom: 20px; }
+            .hero-trailer-btn { margin-top: 15px; }
+            .hero-play-overlay { position: relative; margin-bottom: 15px; }
+            
+            .main-content { 
+                flex-direction: column; 
+                padding: 25px 20px; 
+                gap: 25px; 
+                align-items: center;
+                text-align: center;
+            }
+            .poster-column { width: 120px; min-width: unset; }
+            .left-column { width: 100%; }
+            .details-grid { grid-template-columns: 1fr; gap: 10px; text-align: left; }
+            
+            .schedule-inner { padding: 25px 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content { padding: 25px 15px; gap: 12px; }
+            .hero-info { padding-bottom: 8px; }
+            .hero-title { font-size: 1.8rem; margin-bottom: 12px; }
+            .hero-badges { margin-bottom: 15px; }
+            .hero-trailer-btn { margin-top: 12px; }
+            
+            .main-content { padding: 20px 15px; gap: 20px; }
+            .poster-column { width: 100px; }
+            .details-grid { gap: 8px; }
+            
+            .schedule-inner { padding: 20px 15px; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <img src="peakscinematransparent.png" alt="PeaksCinemas Logo" onclick="window.location.href='home.php'">
-    </div>
-    <button class="profile-btn" onclick="window.location.href='<?= $profile_link ?>'" title="Profile">
+<header id="mainHeader">
+    <a href="home.php" class="brand-logo-wrap" title="Peak's Cinema - Home">
+        <img src="peakscinematransparent.png" alt="Peak's Cinema Logo" class="brand-logo">
+    </a>
+
+    <!-- Right actions -->
+    <div class="header-actions">
+        <?php if (isset($_SESSION['user_id'])): ?>
+        <button type="button" class="bookings-btn" onclick="window.location.href='my_bookings.php'" title="My Bookings">
+            🎟
+        </button>
+        <div class="notif-wrap">
+          <button class="notif-btn" id="notifBtn" onclick="toggleNotif(event)" title="Notifications">
+            🔔<span class="notif-badge" id="notifBadge"></span>
+          </button>
+          <div class="notif-dropdown" id="notifDropdown">
+            <div class="notif-header">
+              <span>Notifications</span>
+              <button type="button" class="notif-mark-all" onclick="markAllRead()">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notifList"><div class="notif-empty">No notifications yet.</div></div>
+            <div class="notif-footer">
+              <a href="notifications_page.php">View All</a>
+            </div>
+          </div>
+        </div>
+        <?php endif; ?>
+        <button class="profile-btn" onclick="window.location.href='<?= $profile_link ?>'" title="Profile">
         <?php if (!empty($profile_photo)): ?>
-            <img src="<?= htmlspecialchars($profile_photo) ?>" alt="Profile" referrerpolicy="no-referrer">
+            <img src="<?= htmlspecialchars($profile_photo) ?>?v=<?= time() ?>" alt="Profile" referrerpolicy="no-referrer">
         <?php elseif (!empty($user_initials)): ?>
             <div class="profile-initials"><?= htmlspecialchars($user_initials) ?></div>
         <?php else: ?>
             <div class="profile-initials">?</div>
         <?php endif; ?>
-    </button>
+        </button>
+    </div>
 </header>
 
 <!-- Hero Banner -->
 <div class="hero-banner">
-    <div class="hero-backdrop" style="background-image: url('/<?= str_replace(' ', '%20', htmlspecialchars($movieDetails['MoviePoster'])) ?>');"></div>
+    <div class="hero-backdrop" style="background-image: url('<?= str_replace(' ', '%20', htmlspecialchars($movieDetails['MoviePoster'])) ?>');"></div>
     <div class="hero-gradient"></div>
 
     <?php if (!empty($movieDetails['TrailerURL'])): ?>
@@ -793,7 +842,7 @@
             </div>
             <?php if (!empty($movieDetails['TrailerURL'])): ?>
             <button class="hero-trailer-btn" onclick="scrollToShowtimes()">
-                🎭 &nbsp;View Showtimes
+                🎬 View Showtimes
             </button>
             <?php endif; ?>
         </div>
@@ -801,10 +850,9 @@
 </div>
 
 <!-- Main Content -->
-<div class="main-content-wrapper">
 <div class="main-content">
     <div class="poster-column">
-        <img src="/<?= htmlspecialchars($movieDetails['MoviePoster']) ?>"
+        <img src="<?= htmlspecialchars($movieDetails['MoviePoster']) ?>"
              alt="<?= htmlspecialchars($movieDetails['MovieName']) ?>">
     </div>
     <div class="left-column">
@@ -832,9 +880,8 @@
         </div>
     </div>
 </div>
-</div><!-- end main-content-wrapper -->
 
-<!-- ── Schedule Section ── -->
+<!-- Schedule Section -->
 <div class="schedule-wrapper" id="showtimes-section">
 <div class="schedule-inner">
     <p class="schedule-title">🎬 Choose Your Showtime</p>
@@ -899,11 +946,22 @@
                             $timeFormatted = date('g:i', strtotime($slot['time']));
                             $ampm          = date('A',   strtotime($slot['time']));
                         ?>
+                        <?php
+                        $isDisabled = !empty($slot['disabled']);
+                        ?>
+                        <?php if ($isDisabled): ?>
+                        <div class="time-btn time-btn-disabled" title="Booking closed — less than 30 minutes to showtime">
+                            <span class="t-time"><?= $timeFormatted ?><span class="t-ampm"><?= $ampm ?></span></span>
+                            <span class="t-theater"><?= htmlspecialchars($slot['theater_name']) ?></span>
+                            <span class="t-closed">Closed</span>
+                        </div>
+                        <?php else: ?>
                         <a class="time-btn"
                            href="seat_selection.php?movie_id=<?= $Movie_ID ?>&mall_id=<?= $mall_id ?>&date=<?= urlencode($d) ?>&timeslot_id=<?= $slot['id'] ?>">
                             <span class="t-time"><?= $timeFormatted ?><span class="t-ampm"><?= $ampm ?></span></span>
                             <span class="t-theater"><?= htmlspecialchars($slot['theater_name']) ?></span>
                         </a>
+                        <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -930,10 +988,8 @@
 
 <script>
     function switchDate(date) {
-        // Hide all panels and deactivate all tabs
         document.querySelectorAll('.date-panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
-        // Show selected
         const panel = document.getElementById('panel-' + date);
         const tab   = document.getElementById('tab-'   + date);
         if (panel) panel.classList.add('active');
@@ -961,40 +1017,94 @@
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTrailer(); });
 
-    // ── Scroll to showtimes ──
     function scrollToShowtimes() {
         const el = document.getElementById('showtimes-section');
         if (el) {
-            const headerH = document.querySelector('header')?.offsetHeight || 70;
+            const headerH = document.querySelector('header')?.offsetHeight || 60;
             const top = el.getBoundingClientRect().top + window.scrollY - headerH;
             window.scrollTo({ top, behavior: 'smooth' });
         }
     }
 
-    // ── Hide header on scroll down, show on scroll up ──
+    // Header Scroll Behavior
     (function() {
-        const header = document.querySelector('header');
-        let lastY    = window.scrollY;
-        let ticking  = false;
-
-        window.addEventListener('scroll', function() {
-            if (!ticking) {
-                requestAnimationFrame(function() {
-                    const currentY = window.scrollY;
-                    if (currentY > lastY && currentY > 80) {
-                        // Scrolling DOWN — hide
-                        header.classList.add('header-hidden');
+        const h = document.getElementById('mainHeader');
+        let last = window.scrollY, tick = false;
+        window.addEventListener('scroll', () => {
+            if (!tick) {
+                requestAnimationFrame(() => {
+                    const cur = window.scrollY;
+                    if (cur > last && cur > 80) {
+                        h.style.transform = 'translateY(-100%)';
                     } else {
-                        // Scrolling UP — show
-                        header.classList.remove('header-hidden');
+                        h.style.transform = 'translateY(0)';
                     }
-                    lastY = currentY;
-                    ticking = false;
+                    last = cur; tick = false;
                 });
-                ticking = true;
+                tick = true;
             }
         }, { passive: true });
     })();
+
+    // Notifications Logic
+    function toggleNotif(e) {
+        e.stopPropagation();
+        const dd = document.getElementById('notifDropdown');
+        if (dd) {
+            dd.classList.toggle('open');
+            if (dd.classList.contains('open')) loadNotif();
+        }
+    }
+
+    function loadNotif() {
+        fetch('notifications_api.php')
+            .then(r => r.json())
+            .then(data => {
+                const list = document.getElementById('notifList');
+                const badge = document.getElementById('notifBadge');
+                if (!list || !data || data.error) return;
+
+                // Update badge count
+                if (badge) {
+                    if (data.unread > 0) {
+                        badge.textContent = data.unread > 9 ? '9+' : data.unread;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+
+                if (!data.notifications?.length) {
+                    list.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+                    return;
+                }
+
+                // Using DIV elements instead of A tags to avoid purple visited links
+                list.innerHTML = data.notifications.map(n => `
+                    <div class="notif-item ${n.IsRead == 0 ? 'unread' : ''}" onclick="window.location.href='notifications_page.php?id=${n.Notif_ID}'">
+                        <div class="notif-dot ${n.IsRead == 1 ? 'read' : ''}"></div>
+                        <div class="notif-item-body">
+                            <div class="notif-item-title">${n.Title}</div>
+                            <div class="notif-item-msg">${n.Message}</div>
+                            <div class="notif-item-time">${n.time_ago || 'Just now'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }).catch(err => console.error('Notif error:', err));
+    }
+
+    function markAllRead() {
+        fetch('notifications_api.php?action=mark_read')
+            .then(r => r.json())
+            .then(() => loadNotif())
+            .catch(err => console.error('Mark read error:', err));
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.notif-wrap')) {
+            document.getElementById('notifDropdown')?.classList.remove('open');
+        }
+    });
 </script>
 </body>
 </html>

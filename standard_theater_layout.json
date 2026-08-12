@@ -1,0 +1,92 @@
+{
+  "seats": {
+    "A": [
+      {"SeatColumn": 1, "SeatType": "Premium"},
+      {"SeatColumn": 2, "SeatType": "Premium"},
+      {"SeatColumn": 3, "SeatType": "Premium"},
+      {"SeatColumn": 4, "SeatType": "Premium"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Premium"},
+      {"SeatColumn": 6, "SeatType": "Premium"},
+      {"SeatColumn": 7, "SeatType": "Premium"},
+      {"SeatColumn": 8, "SeatType": "Premium"}
+    ],
+    "B": [
+      {"SeatColumn": 1, "SeatType": "Premium"},
+      {"SeatColumn": 2, "SeatType": "Premium"},
+      {"SeatColumn": 3, "SeatType": "Premium"},
+      {"SeatColumn": 4, "SeatType": "Premium"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Premium"},
+      {"SeatColumn": 6, "SeatType": "Premium"},
+      {"SeatColumn": 7, "SeatType": "Premium"},
+      {"SeatColumn": 8, "SeatType": "Premium"}
+    ],
+    "C": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ],
+    "D": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ],
+    "E": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ],
+    "F": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ],
+    "G": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ],
+    "H": [
+      {"SeatColumn": 1, "SeatType": "Standard"},
+      {"SeatColumn": 2, "SeatType": "Standard"},
+      {"SeatColumn": 3, "SeatType": "Standard"},
+      {"SeatColumn": 4, "SeatType": "Standard"},
+      {"SeatColumn": 0, "SeatType": "Empty"},
+      {"SeatColumn": 5, "SeatType": "Standard"},
+      {"SeatColumn": 6, "SeatType": "Standard"},
+      {"SeatColumn": 7, "SeatType": "Standard"},
+      {"SeatColumn": 8, "SeatType": "Standard"}
+    ]
+  }
+}

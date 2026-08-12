@@ -80,11 +80,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['screenings'])) {
             $base_seats = $conn->prepare("SELECT * FROM seats WHERE Theater_ID = ? AND TimeSlot_ID IS NULL");
             $base_seats->bind_param("i", $Theater_ID_post); $base_seats->execute();
             $baseResult = $base_seats->get_result();
-            $SeatAvailability = 1;
-
             $ins = $conn->prepare("INSERT INTO seats(SeatRow, SeatColumn, SeatType, SeatPrice, SeatAvailability, Theater_ID, TimeSlot_ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
             while ($seat = $baseResult->fetch_assoc()) {
-                $ins->bind_param("sisiiii", $seat['SeatRow'], $seat['SeatColumn'], $seat['SeatType'], $SeatPrice, $SeatAvailability, $Theater_ID_post, $TimeSlot_ID);
+                $copySeatColumn = (int)($seat['SeatColumn'] ?? 0);
+                $copySeatType   = (string)($seat['SeatType'] ?? 'Standard');
+                $copyTypeLower  = strtolower(trim($copySeatType));
+
+                if ($copySeatColumn === 0 && $copyTypeLower === 'empty') {
+                    $copySeatColumn = 20;
+                    $copySeatType   = 'Standard';
+                    $copyTypeLower  = 'standard';
+                }
+
+                $SeatAvailability = 'Available';
+                $ins->bind_param("sisdsii", $seat['SeatRow'], $copySeatColumn, $copySeatType, $SeatPrice, $SeatAvailability, $Theater_ID_post, $TimeSlot_ID);
                 $ins->execute();
             }
         }
@@ -156,12 +165,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_timeslot'])) {
         }
 
         .logo {
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #F9F9F9;
-            text-transform: uppercase;
+            display:flex;
+            align-items:center;
         }
+        .logo img { height: 42px; width: auto; filter: invert(1); display: block; }
 
         nav { display: flex; gap: 4px; }
 
@@ -572,14 +579,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_timeslot'])) {
 <body>
 
 <header>
-    <div class="logo">🎬 PeaksCinemas Admin</div>
+<div class="logo"><img src="../peakscinematransparent.png" alt="Peak's Cinema Logo"></div>
     <nav>
         <a href="dashboard.php">Dashboard</a>
         <a href="malls_selection_admin.php">Malls</a>
         <a href="malls_selection_admin.php" class="active">➕ Add Screenings</a>
         <a href="movie_upload.php">Movie Upload</a>
+        <a href="food_admin.php">Food & Drinks</a>
         <a href="theater_upload.php">Theater Upload</a>
         <a href="mall_upload.php">Mall Upload</a>
+        <a href="queue_admin.php">Queue Manager</a>
     </nav>
     <div style="display:flex;align-items:center;gap:8px;">
         <a href="../home.php"
@@ -634,7 +643,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_timeslot'])) {
                         // Pad to 20 seats
                         $taCols = array_values(array_slice($columns, 0, 20));
                         while (count($taCols) < 20) {
-                            $taCols[] = ['SeatType'=>'standard','SeatRow'=>$row,'SeatColumn'=>count($taCols)+1,'SeatPrice'=>0,'SeatAvailability'=>1,'Seat_ID'=>0];
+                $taCols[] = ['SeatType'=>'standard','SeatRow'=>$row,'SeatColumn'=>count($taCols)+1,'SeatPrice'=>0,'SeatAvailability'=>'Available','Seat_ID'=>0];
                         }
                         foreach ($taCols as $taPos => $seat):
                             $type = strtolower(trim($seat['SeatType'] ?? 'standard'));

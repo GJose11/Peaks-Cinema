@@ -1,0 +1,5 @@
+[2026-04-07 16:50:25] No reminders to send
+[2026-04-07 17:00:45] Processing booking PC-20260407-9521 for customer 9
+[2026-04-07 17:00:49] Inserted reminder record for Ticket_ID 365.
+[2026-04-07 17:00:49] Inserted reminder record for Ticket_ID 366.
+[2026-04-07 17:00:50] Successfully committed reminders_sent for booking PC-20260407-9521

@@ -532,7 +532,7 @@
                 <div class = "posterCard">
 
                     <?php if ($movieDetails): ?>
-                        <img src = "/<?= htmlspecialchars($movieDetails['MoviePoster']) ?>"
+                        <img src = "<?= htmlspecialchars($movieDetails['MoviePoster']) ?>"
                             alt = "<?= htmlspecialchars($movieDetails['MovieName']) ?>">
                     <?php endif; ?>
 
